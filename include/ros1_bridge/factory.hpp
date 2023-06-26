@@ -294,8 +294,7 @@ public:
 
   bool forward_1_to_2(
     rclcpp::ClientBase::SharedPtr cli, rclcpp::Logger logger,
-    const ROS1Request & request1, ROS1Response & response1,
-    int service_execution_timeout)
+    const ROS1Request & request1, ROS1Response & response1)
   {
     auto client = std::dynamic_pointer_cast<rclcpp::Client<ROS2_T>>(cli);
     if (!client) {
@@ -312,31 +311,28 @@ public:
       }
       RCLCPP_WARN(logger, "Waiting for ROS 2 service %s...", cli->get_service_name());
     }
-    auto timeout = std::chrono::seconds(service_execution_timeout);
+    auto timeout = std::chrono::seconds(5);
     auto future = client->async_send_request(request2);
     auto status = future.wait_for(timeout);
     if (status == std::future_status::ready) {
       auto response2 = future.get();
       translate_2_to_1(*response2, response1);
     } else {
-      RCLCPP_ERROR(
-        logger, "Failed to get response from ROS 2 service %s within %d seconds",
-        cli->get_service_name(), service_execution_timeout);
+      RCLCPP_ERROR(logger, "Failed to get response from ROS 2 service %s", cli->get_service_name());
       return false;
     }
     return true;
   }
 
   ServiceBridge1to2 service_bridge_1_to_2(
-    ros::NodeHandle & ros1_node, rclcpp::Node::SharedPtr ros2_node, const std::string & name,
-    int service_execution_timeout)
+    ros::NodeHandle & ros1_node, rclcpp::Node::SharedPtr ros2_node, const std::string & name)
   {
     ServiceBridge1to2 bridge;
     bridge.client = ros2_node->create_client<ROS2_T>(name);
     auto m = &ServiceFactory<ROS1_T, ROS2_T>::forward_1_to_2;
     auto f = std::bind(
       m, this, bridge.client, ros2_node->get_logger(), std::placeholders::_1,
-      std::placeholders::_2, service_execution_timeout);
+      std::placeholders::_2);
     bridge.server = ros1_node.advertiseService<ROS1Request, ROS1Response>(name, f);
     return bridge;
   }

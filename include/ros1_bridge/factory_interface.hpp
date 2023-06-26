@@ -123,10 +123,21 @@ class ServiceFactoryInterface
 {
 public:
   virtual ServiceBridge1to2 service_bridge_1_to_2(
-    ros::NodeHandle &, rclcpp::Node::SharedPtr, const std::string &, int) = 0;
+    ros::NodeHandle &, rclcpp::Node::SharedPtr, const std::string &) = 0;
 
   virtual ServiceBridge2to1 service_bridge_2_to_1(
     ros::NodeHandle &, rclcpp::Node::SharedPtr, const std::string &) = 0;
+};
+
+class ActionFactoryInterface
+{
+public:
+  virtual void create_server_client(
+    ros::NodeHandle ros1_node,
+    rclcpp::Node::SharedPtr ros2_node,
+    const std::string action_name) = 0;
+
+  virtual void shutdown() = 0;
 };
 
 }  // namespace ros1_bridge
