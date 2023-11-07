@@ -1,0 +1,27 @@
+version: '3'
+services:
+  ros1-bridge:
+    build:
+      context: "../.."
+      dockerfile: "docker/noetic_foxy/Dockerfile"
+    environment:
+      - ROS_LOCALHOST_ONLY=$ROS_LOCALHOST_ONLY
+      - ROS_DOMAIN_ID=$ROS_DOMAIN_ID
+      - ROS_LOG_DIR=/tmp/.ros
+    volumes:
+      # Mount DDS shared memory location; see https://stackoverflow.com/questions/65900201/troubles-communicating-with-ros2-node-in-docker-container
+      - /dev/shm:/dev/shm
+    stdin_open: true
+    tty: true
+    container_name: ros1-bridge
+    image: ghcr.io/ros-industrial/ros1_bridge:noetic-foxy
+    privileged: true
+    
+    # Run as the same user as the other system
+    # CURRENT_UID=$(id -u):$(id -g)
+    user: ${CURRENT_UID}
+
+    # Share the network with the host PC
+    network_mode: host
+    ipc: host
+    pid: host
