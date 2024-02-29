@@ -2,7 +2,7 @@ repo_name: 2lambda123/ros1_bridge
 report_id: 151e935dfb670c7788d7355128a853ff
 version: 0.1
 repo_type: Public
-timestamp: '2024-01-09T06:53:54+00:00'
+timestamp: '2024-02-29T19:14:28+00:00'
 requested_by: marip8
 provider: github
 branch: action-bridge
@@ -44,7 +44,7 @@ tools:
   last_updated_by: Michael Ripperger
   last_updated_on: 2023-11-07 16:41:42.000000000 Z
 - name: CMake
-  description: 'An open-source system that manages the build process '
+  description: An open-source system that manages the build process
   website_url: http://www.cmake.org/
   open_source: false
   hosted_saas: false
